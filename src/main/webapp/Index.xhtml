@@ -11,19 +11,27 @@
 
 	</h:head>
 
-	<h:body>
+	<h:body style="background-color:#27374D;">
 
 	<p:growl id="messages" showDetail="true"/>
 
 	<div class="card">
-	    <h5>Single</h5>
-	    <h:form enctype="multipart/form-data">
+	    <h5 style="font-size:20px; text-align:center; font-family:Arial; color:#9DB2BF;">Subir archivo</h5>
+	    <h:form enctype="multipart/form-data" style="display:block; text-align:center">
 	        <p:fileUpload value="#{fileUploadView.file}" mode="simple" skinSimple="true"/>
 	
 	        <p:commandButton value="Submit" ajax="false" action="#{fileUploadView.upload}" styleClass="mt-3 ui-button-outlined block"/>
 	    </h:form>
 	</div>
-		
+	<div>
+		<H5  style="font-size:20px; text-align:center; font-family:Arial; color:#9DB2BF;">Buscar palabra</H5>
+		<h:form style="display:block; text-align:center">
+			<p:inputText></p:inputText>
+		</h:form>
+		<h:form style="display:block; text-align:center; margin-top:40px">
+	        <p:inputTextarea rows="6" cols="33"/>
+		</h:form>
+	</div>		
 
 	</h:body>
 </html>
