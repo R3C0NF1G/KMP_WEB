@@ -24,7 +24,7 @@
 	<div>
 		<h5  style="font-size:20px; text-align:center; font-family:Arial; color:#9DB2BF;">Buscar palabra</h5>
 		<h:form style="display:block; text-align:center">
-			<p:inputText>
+			<p:inputText value="#{fileBean.textToSearch}">
 				  <p:ajax event="keyup" listener="#{fileBean.search}" />
 			</p:inputText>
 		</h:form>

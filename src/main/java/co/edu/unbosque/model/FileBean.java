@@ -16,9 +16,24 @@ public class FileBean {
 	private UploadedFile file;
 //	private File actualFile;
 	private String content;
+	private String textToSearch;
 
 	public void search() {
-		System.out.println("Hola");
+		System.out.println(textToSearch);
+		if (!textToSearch.isEmpty() && content != null && textToSearch != null) {
+			doTheSearch();
+		}
+	}
+
+	private void doTheSearch() {
+		// Implementa aquí tu algoritmo de búsqueda KMP para encontrar todas las
+		// coincidencias
+		// y aplica el subrayado a las coincidencias encontradas en el texto
+		// Puedes usar métodos como String.replaceAll() o StringBuilder para hacerlo.
+
+		// Ejemplo simple que subraya todas las coincidencias en el texto:
+		// texto = texto.replaceAll(palabra, "<span style='text-decoration:
+		// underline;'>" + palabra + "</span>");
 	}
 
 	public void upload() {
@@ -69,6 +84,14 @@ public class FileBean {
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+
+	public String getTextToSearch() {
+		return textToSearch;
+	}
+
+	public void setTextToSearch(String textToSearch) {
+		this.textToSearch = textToSearch;
 	}
 
 }
