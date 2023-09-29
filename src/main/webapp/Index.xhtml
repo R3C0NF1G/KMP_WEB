@@ -1,9 +1,7 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
-	xmlns:jsf="http://xmlns.jcp.org/jsf"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
 
@@ -18,18 +16,20 @@
 	<div class="card">
 	    <h5 style="font-size:20px; text-align:center; font-family:Arial; color:#9DB2BF;">Subir archivo</h5>
 	    <h:form enctype="multipart/form-data" style="display:block; text-align:center">
-	        <p:fileUpload value="#{File.file}" mode="simple" skinSimple="true"/>
+	        <p:fileUpload value="#{fileBean.file}" mode="simple" skinSimple="true" />
 	
-	        <p:commandButton value="Submit" ajax="false" action="#{File.upload}" styleClass="mt-3 ui-button-outlined block"/>
+	        <p:commandButton value="Submit" ajax="false" action="#{fileBean.upload}" styleClass="mt-3 ui-button-outlined block"/>
 	    </h:form>
 	</div>
 	<div>
-		<H5  style="font-size:20px; text-align:center; font-family:Arial; color:#9DB2BF;">Buscar palabra</H5>
+		<h5  style="font-size:20px; text-align:center; font-family:Arial; color:#9DB2BF;">Buscar palabra</h5>
 		<h:form style="display:block; text-align:center">
-			<p:inputText></p:inputText>
+			<p:inputText>
+				  <p:ajax event="keyup" listener="#{fileBean.search}" />
+			</p:inputText>
 		</h:form>
 		<h:form style="display:block; text-align:center; margin-top:40px">
-	        <p:inputTextarea rows="6" cols="33"/>
+	        <p:inputTextarea rows="6" cols="33" value="#{fileBean.content}" disabled="true"/>
 		</h:form>
 	</div>		
 
