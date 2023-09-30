@@ -16,7 +16,8 @@
 	<div class="card">
 	    <h5 style="font-size:20px; text-align:center; font-family:Arial; color:#9DB2BF;">Subir archivo</h5>
 	    <h:form enctype="multipart/form-data" style="display:block; text-align:center">
-	        <p:fileUpload value="#{fileBean.file}" mode="simple" skinSimple="true" />
+	    	<p:growl id="msg"></p:growl>
+			<p:fileUpload value="#{fileBean.file}" mode="simple" skinSimple="true" fileLimit="1" accept="text/plain" invalidFileMessage="Archivo no válido" update="msg"/>
 	
 	        <p:commandButton value="Submit" ajax="false" action="#{fileBean.upload}" styleClass="mt-3 ui-button-outlined block"/>
 	    </h:form>

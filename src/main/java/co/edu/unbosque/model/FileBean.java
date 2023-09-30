@@ -26,12 +26,13 @@ public class FileBean {
 	private Boolean useCapitals;
 
 	public void search1() {
-		highlightedContent = ""; // Reinicia highlightedContent
-		// Reiniciar el texto
-		System.out.println("Reinciando texto...");
-		content = new String(contentCopy);
-		System.out.println(textToSearch);
+
 		if (!textToSearch.isEmpty() && content != null && textToSearch != null) {
+			highlightedContent = ""; // Reinicia highlightedContent
+			// Reiniciar el texto
+			System.out.println("Reinciando texto...");
+			content = new String(contentCopy);
+			System.out.println(textToSearch);
 
 			this.content = contentCopy;
 			cantCoincidencias = 0;
