@@ -18,15 +18,17 @@ public class FileBean {
 //	private File actualFile;
 	private String content;
 	private String textToSearch;
+	private int cantCoincidencias;
 
 	public void search() {
 		System.out.println(textToSearch);
 		if (!textToSearch.isEmpty() && content != null && textToSearch != null) {
-			doTheSearch();
+			cantCoincidencias = doTheSearch();
+			
 		}
 	}
 
-	private void doTheSearch() {
+	private int doTheSearch() {
 		// Implementa aquí tu algoritmo de búsqueda KMP para encontrar todas las
 		// coincidencias
 		// y aplica el subrayado a las coincidencias encontradas en el texto
@@ -41,6 +43,7 @@ public class FileBean {
 		
 		int M = textToSearch.length();
         int N = content.length();
+        int count = 0;
  
         // create lps[] that will hold the longest
         // prefix suffix values for pattern
@@ -60,7 +63,7 @@ public class FileBean {
             if (j == M) {
                 System.out.println("Found pattern "
                                    + "at index " + (i - j));
-                
+                count ++;
                 j = lps[j - 1];
   
             }
@@ -75,6 +78,9 @@ public class FileBean {
                     i = i + 1;
             }
         }
+        
+        return count;
+        
 	}
 	
 	 void computeLPSArray(String pat, int M, int lps[])
@@ -174,4 +180,8 @@ public class FileBean {
 		this.textToSearch = textToSearch;
 	}
 
+	public int getCantCoincidencias() {
+		return cantCoincidencias;
+	}
+	
 }
