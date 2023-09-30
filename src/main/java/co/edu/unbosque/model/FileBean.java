@@ -23,6 +23,7 @@ public class FileBean {
 	private String textToSearch;
 	private int cantCoincidencias;
 	private String highlightedContent;
+	private Boolean useCapitals;
 
 	public void search1() {
 		highlightedContent = ""; // Reinicia highlightedContent
@@ -38,15 +39,25 @@ public class FileBean {
 
 			// Aplicar el algoritmo KMP para buscar y resaltar coincidencias
 			System.out.println("A buscar");
-			List<Integer> matchPositions = kmpSearchAll(content, textToSearch);
-			cantCoincidencias = matchPositions.size();
+			if (useCapitals == true) {
+				List<Integer> matchPositions = kmpSearchAll(content, textToSearch);
+				cantCoincidencias = matchPositions.size();
+				// Resaltar coincidencias
+				String highlightedContent = highlightMatchesWithHtml(content, matchPositions);
 
-			// Resaltar coincidencias
-			String highlightedContent = highlightMatchesWithHtml(content, matchPositions);
+				// Asigna el contenido resaltado a la propiedad highlightedContent
+				// highlightedContent = highlightedContent.replace("\n", "<br/>");
+				this.content = highlightedContent;
+			} else {
+				List<Integer> matchPositions = kmpSearchAll(content.toLowerCase(), textToSearch.toLowerCase());
+				cantCoincidencias = matchPositions.size();
+				// Resaltar coincidencias
+				String highlightedContent = highlightMatchesWithHtml(content, matchPositions);
 
-			// Asigna el contenido resaltado a la propiedad highlightedContent
-			// highlightedContent = highlightedContent.replace("\n", "<br/>");
-			this.content = highlightedContent;
+				// Asigna el contenido resaltado a la propiedad highlightedContent
+				// highlightedContent = highlightedContent.replace("\n", "<br/>");
+				this.content = highlightedContent;
+			}
 
 		}
 	}
@@ -198,6 +209,42 @@ public class FileBean {
 
 	public int getCantCoincidencias() {
 		return cantCoincidencias;
+	}
+
+	public UploadedFile getFileBackup() {
+		return fileBackup;
+	}
+
+	public void setFileBackup(UploadedFile fileBackup) {
+		this.fileBackup = fileBackup;
+	}
+
+	public String getContentCopy() {
+		return contentCopy;
+	}
+
+	public void setContentCopy(String contentCopy) {
+		this.contentCopy = contentCopy;
+	}
+
+	public String getHighlightedContent() {
+		return highlightedContent;
+	}
+
+	public void setHighlightedContent(String highlightedContent) {
+		this.highlightedContent = highlightedContent;
+	}
+
+	public Boolean getUseCapitals() {
+		return useCapitals;
+	}
+
+	public void setUseCapitals(Boolean useCapitals) {
+		this.useCapitals = useCapitals;
+	}
+
+	public void setCantCoincidencias(int cantCoincidencias) {
+		this.cantCoincidencias = cantCoincidencias;
 	}
 
 }

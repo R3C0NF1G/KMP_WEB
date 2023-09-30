@@ -24,6 +24,9 @@
 	<div>
 		<h5  style="font-size:20px; text-align:center; font-family:Arial; color:#9DB2BF;">Buscar palabra</h5>
 		<h:form style="display:block; text-align:center">
+			<h5 style="font-family:Arial; color:#9DB2BF;">Diferenciar mayúsculas
+        	<p:selectBooleanCheckbox value="#{fileBean.useCapitals}"/>
+        	</h5>
 			<p:inputText value="#{fileBean.textToSearch}">
 			</p:inputText>
 			<p:commandButton value="Buscar" ajax="false" action="#{fileBean.search1}" styleClass="mt-3 ui-button-outlined block"></p:commandButton>
