@@ -3,6 +3,7 @@ package co.edu.unbosque.model;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.regex.Pattern;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -61,12 +62,7 @@ public class FileBean {
                                    + "at index " + (i - j));
                 
                 j = lps[j - 1];
-                
-                String txtFound = content.substring(i - j, i - j + textToSearch.length());
-                
-                content = content.replaceAll(txtFound, "<span style='background-color:yellow;'>" + txtFound + "</span>");
-                
-                break;
+  
             }
  
             // mismatch after j matches
@@ -113,6 +109,11 @@ public class FileBean {
 	                }
 	            }
 	        }
+	        
+	        String tmp = textToSearch;
+	        
+	        content = content.replaceAll("\\b" + tmp + "\\b", "<span style='background-color:yellow;'>" + tmp + "</span>");
+	        
 	    }
 
 	public void upload() {
