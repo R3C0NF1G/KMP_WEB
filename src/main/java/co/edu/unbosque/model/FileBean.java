@@ -3,7 +3,8 @@ package co.edu.unbosque.model;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -15,123 +16,49 @@ import org.primefaces.model.file.UploadedFile;
 public class FileBean {
 
 	private UploadedFile file;
+	private UploadedFile fileBackup;
 //	private File actualFile;
 	private String content;
+	private String contentCopy;
 	private String textToSearch;
 	private int cantCoincidencias;
+	private String highlightedContent;
 
-	public void search() {
+	public void search1() {
+		highlightedContent = ""; // Reinicia highlightedContent
+		// Reiniciar el texto
+		System.out.println("Reinciando texto...");
+		content = new String(contentCopy);
 		System.out.println(textToSearch);
 		if (!textToSearch.isEmpty() && content != null && textToSearch != null) {
-			cantCoincidencias = doTheSearch();
-			
+
+			this.content = contentCopy;
+			cantCoincidencias = 0;
+			// cantCoincidencias = doTheSearch();
+
+			// Aplicar el algoritmo KMP para buscar y resaltar coincidencias
+			System.out.println("A buscar");
+			List<Integer> matchPositions = kmpSearchAll(content, textToSearch);
+			cantCoincidencias = matchPositions.size();
+
+			// Resaltar coincidencias
+			String highlightedContent = highlightMatchesWithHtml(content, matchPositions);
+
+			// Asigna el contenido resaltado a la propiedad highlightedContent
+			// highlightedContent = highlightedContent.replace("\n", "<br/>");
+			this.content = highlightedContent;
+
 		}
 	}
 
-	private int doTheSearch() {
-		// Implementa aquí tu algoritmo de búsqueda KMP para encontrar todas las
-		// coincidencias
-		// y aplica el subrayado a las coincidencias encontradas en el texto
-		// Puedes usar métodos como String.replaceAll() o StringBuilder para hacerlo.
-
-		// Ejemplo simple que subraya todas las coincidencias en el texto:
-		// texto = texto.replaceAll(palabra, "<span style='text-decoration:
-		// underline;'>" + palabra + "</span>");
-		
-		textToSearch = textToSearch.toLowerCase();
-		content = content.toLowerCase();
-		
-		int M = textToSearch.length();
-        int N = content.length();
-        int count = 0;
- 
-        // create lps[] that will hold the longest
-        // prefix suffix values for pattern
-        int lps[] = new int[M];
-        int j = 0; // index for pat[]
- 
-        // Preprocess the pattern (calculate lps[]
-        // array)
-        computeLPSArray(textToSearch, M, lps);
- 
-        int i = 0; // index for txt[]
-        while (i < N) {
-            if (textToSearch.charAt(j) == content.charAt(i)) {
-                j++;
-                i++;
-            }
-            if (j == M) {
-                System.out.println("Found pattern "
-                                   + "at index " + (i - j));
-                count ++;
-                j = lps[j - 1];
-  
-            }
- 
-            // mismatch after j matches
-            else if (i < N && textToSearch.charAt(j) != content.charAt(i)) {
-                // Do not match lps[0..lps[j-1]] characters,
-                // they will match anyway
-                if (j != 0)
-                    j = lps[j - 1];
-                else
-                    i = i + 1;
-            }
-        }
-        
-        return count;
-        
-	}
-	
-	 void computeLPSArray(String pat, int M, int lps[])
-	    {
-	        // length of the previous longest prefix suffix
-	        int len = 0;
-	        int i = 1;
-	        lps[0] = 0; // lps[0] is always 0
-	 
-	        // the loop calculates lps[i] for i = 1 to M-1
-	        while (i < M) {
-	            if (pat.charAt(i) == pat.charAt(len)) {
-	                len++;
-	                lps[i] = len;
-	                i++;
-	            }
-	            else // (pat[i] != pat[len])
-	            {
-	                // This is tricky. Consider the example.
-	                // AAACAAAA and i = 7. The idea is similar
-	                // to search step.
-	                if (len != 0) {
-	                    len = lps[len - 1];
-	 
-	                    // Also, note that we do not increment
-	                    // i here
-	                }
-	                else // if (len == 0)
-	                {
-	                    lps[i] = len;
-	                    i++;
-	                }
-	            }
-	        }
-	        
-	        String tmp = textToSearch;
-	        
-	        content = content.replaceAll("\\b" + tmp + "\\b", "<span style='background-color:yellow;'>" + tmp + "</span>");
-	        
-	    }
-
 	public void upload() {
-		if (file != null) {
-			System.out.println("Cargado " + file.getFileName());
-			String fileName = file.getFileName();
-
-			String path = "KMP_WEB\\rec\\";
-			// actualFile = new File(path + fileName);
+		System.out.println("Creando copia...");
+		this.fileBackup = file;
+		if (fileBackup != null) {
+			System.out.println("Cargado " + fileBackup.getFileName());
 
 			try {
-				BufferedReader BR = new BufferedReader(new InputStreamReader(file.getInputStream()));
+				BufferedReader BR = new BufferedReader(new InputStreamReader(fileBackup.getInputStream()));
 				StringBuilder builder = new StringBuilder();
 				String line = null;
 				String separator = System.getProperty("line.separator");
@@ -144,12 +71,101 @@ public class FileBean {
 				builder.deleteCharAt(builder.length() - 1);
 				BR.close();
 
+				System.out.println("Leyendo...");
 				content = builder.toString();
+				// Crea una copia del texto original
+				contentCopy = new String(content);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
+				System.out.println("No se pudo releer el archivo");
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public void resetContent() {
+		try {
+			BufferedReader BR = new BufferedReader(new InputStreamReader(fileBackup.getInputStream()));
+			StringBuilder builder = new StringBuilder();
+			String line = null;
+			String separator = System.getProperty("line.separator");
+
+			while ((line = BR.readLine()) != null) {
+				builder.append(line);
+				builder.append(separator);
+			}
+
+			builder.deleteCharAt(builder.length() - 1);
+			BR.close();
+
+			System.out.println("Leyendo...");
+			content = builder.toString();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("No se pudo releer el archivo");
+			e.printStackTrace();
+		}
+	}
+
+	public List<Integer> kmpSearchAll(String text, String pattern) {
+		List<Integer> positions = new ArrayList<>();
+		int[] next = kmpNext(pattern);
+		int j = 0;
+		for (int i = 0; i < text.length(); i++) {
+			while (j > 0 && text.charAt(i) != pattern.charAt(j)) {
+				j = next[j - 1];
+			}
+			if (text.charAt(i) == pattern.charAt(j)) {
+				j++;
+			}
+			if (j == pattern.length()) {
+				int startPosition = i - j + 1;
+				positions.add(startPosition);
+
+				// Reinicia j para buscar más coincidencias en la misma posición
+				j = next[j - 1];
+			}
+		}
+		return positions;
+	}
+
+	public String highlightMatchesWithHtml(String text, List<Integer> matchPositions) {
+		StringBuilder highlightedText = new StringBuilder();
+		int currentIndex = 0;
+		System.out.println("Posiciones: " + matchPositions.toString());
+		for (int position : matchPositions) {
+			highlightedText.append(text.substring(currentIndex, position)); // Texto antes de la coincidencia
+			highlightedText.append("<span style='background-color: yellow;'>");
+
+			// Agregar toda la coincidencia desde la posición inicial hasta el final
+			int endIndex = position + textToSearch.length();
+			System.out.println("Resaltando " + text.substring(position, endIndex));
+			System.out.println("Inicia:" + position);
+			System.out.println("Termina: " + endIndex);
+			System.out.println();
+			highlightedText.append(text.substring(position, endIndex));
+
+			highlightedText.append("</span>");
+			currentIndex = endIndex; // Mover currentIndex al siguiente carácter después de la coincidencia
+		}
+		// Agregar el texto después de la última coincidencia
+		highlightedText.append(text.substring(currentIndex));
+		return highlightedText.toString();
+	}
+
+	public int[] kmpNext(String pattern) {
+		int[] next = new int[pattern.length()];
+		int j = 0;
+		for (int i = 1; i < pattern.length(); i++) {
+			while (j > 0 && pattern.charAt(i) != pattern.charAt(j)) {
+				j = next[j - 1];
+			}
+			if (pattern.charAt(i) == pattern.charAt(j)) {
+				j++;
+			}
+			next[i] = j;
+		}
+		return next;
 	}
 
 	public String readFile() {
@@ -183,5 +199,5 @@ public class FileBean {
 	public int getCantCoincidencias() {
 		return cantCoincidencias;
 	}
-	
+
 }
